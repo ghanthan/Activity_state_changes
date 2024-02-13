@@ -11,6 +11,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private var initialValue = 0
+    private lateinit var counterValue :TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -18,12 +20,13 @@ class MainActivity : AppCompatActivity() {
 
         Log.i("OnCreate","App started in OnCreate")
 
-        var counterValue : TextView = findViewById(R.id.tvCounterValue)
+         counterValue  = findViewById(R.id.tvCounterValue)
         val increase : Button = findViewById(R.id.increaseBtn)
         val decrease : Button = findViewById(R.id.decreaseBtn)
 
-        savedInstanceState?.let { counterValue.text = initialValue.toString() }
-
+        savedInstanceState?.let {
+            counterValue.text = savedInstanceState.getInt("CounterValue",initialValue).toString()
+        }
 
         increase.setOnClickListener {
             incrementValue(counterValue)
@@ -35,6 +38,12 @@ class MainActivity : AppCompatActivity() {
 
 
 
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.i("onRestoreInstance","Data received when state changed")
+        counterValue.text = savedInstanceState.getInt("CounterValue",initialValue).toString()
     }
 
     private fun decreaseValue(counterValue: TextView) {
@@ -49,13 +58,12 @@ class MainActivity : AppCompatActivity() {
         counterValue.text = initialValue.toString()
     }
 
-
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        outState.putInt("CounterValue",initialValue)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
         Log.i("OnSaveInstance","Data saved when state changed")
-
+        outState.putInt("CounterValue",initialValue)
     }
+
 
     override fun onStop() {
         super.onStop()
